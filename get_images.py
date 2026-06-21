@@ -3,11 +3,10 @@ import os
 from bs4 import BeautifulSoup
 import urllib.parse
 
+from utils import MyError
+
 CACHE_FOLDER = os.path.join(".", "cache")
 DATA_FOLDER = os.path.join(".", "data")
-
-class MyError(Exception):
-    pass
 
 def get_png(url: str):
     url = url.removesuffix("/")
