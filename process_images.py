@@ -14,6 +14,7 @@ def process_image(filename):
     # get rows and cols
     name = os.path.split(filename)[1]
     number, cols, rows = name.removesuffix(".png").split("-")
+    height, width = img.shape
 
     col_width = 56
     row_height = 56
@@ -43,10 +44,12 @@ def process_image(filename):
         # odd iterator -> even row
         else:
             y = even_start_y + ((row-1) // 2) * (row_height + row_gap)
-            for col in range(int(cols) - 1):
+            for col in range(int(cols)):
                 x = even_start_x + col * (col_width + col_gap)
+                if x + col_width > width:
+                    continue
                 crop_img = img[y:y+row_height, x:x+col_width]
                 cv2.imwrite(f"data/cropped/{number}/{row}_{col}.png", crop_img)
 
 if __name__ == "__main__":
-    process_image('data/original/211800-6-8.png')
+    process_image('data/original/209936-2-16.png')
