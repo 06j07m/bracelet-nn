@@ -13,7 +13,6 @@ def get_png(url: str):
     url = url.removesuffix("/")
     number = os.path.basename(urllib.parse.urlparse(url).path)
     filename = os.path.join(CACHE_FOLDER, f"{number}.html")
-    png_filename = os.path.join(DATA_FOLDER, "original", f"{number}.png")
 
     # check if content is in cache
     if os.path.exists(filename):
@@ -33,7 +32,7 @@ def get_png(url: str):
     # get div with class pattern_svg
     div = soup.find('object', class_='pattern_svg')
     if not div:
-        raise MyError("div not found")
+        raise MyError("svg div not found")
 
     # get image link
     img = div.find('img')
@@ -42,6 +41,20 @@ def get_png(url: str):
     png_link = img.get('src')
     if not png_link:
         raise MyError("link not found")
+
+    # get div with dimensions
+    div2 = soup.find('div', class_='pattern_dimensions')
+    if not div2:
+        raise MyError("dimensions div not found")
+
+    # get actual dimensions
+    data = div2.find('div', class_='data')
+    if not data:
+        raise MyError("dimensions not found")
+    dimensions = data.text
+    rows, cols = dimensions.split("x")
+
+    png_filename = os.path.join(DATA_FOLDER, "original", f"{number}-{rows}-{cols}.png")
 
     # don't send request if file already exists
     if os.path.exists(png_filename):
