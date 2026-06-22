@@ -16,7 +16,7 @@ def process_image(filename, starting_index=0):
     img = cv2.imread(filename, 0)
 
     # get rows and cols
-    name = os.path.split(filename)[1]
+    name = os.path.basename(filename)
     number, cols, rows = name.removesuffix(".png").split("-")
     height, width = img.shape
 
