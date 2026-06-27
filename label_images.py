@@ -8,7 +8,7 @@ DATA_DIR = os.path.join(".", "data")
 
 def label_images(image_dir, label_file):
     # dictionary to store labels
-    labels = {"Files": [], "Labels": []}
+    labels = {"File": [], "Label": []}
 
     keys = {
         ord('0'): 0,
@@ -27,8 +27,8 @@ def label_images(image_dir, label_file):
             k = cv2.waitKey(0) & 0xFF
 
             if k in keys:
-                labels["Files"].append(name)
-                labels["Labels"].append(keys[k])
+                labels["File"].append(name)
+                labels["Label"].append(keys[k])
             else:
                 pd.DataFrame.from_dict(labels).to_csv(label_file, index=False)
                 raise MyError("Invalid key pressed. Please press 0, 1, 2, or 3.")
