@@ -70,7 +70,8 @@ if __name__ == "__main__":
     with open("links.txt", "r") as f:
         for line in f:
             try:
-                get_png(line.strip())
+                if not line.startswith("#"):
+                    get_png(line.strip())
             except Exception as e:
                 print(e)
 

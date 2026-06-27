@@ -4,6 +4,8 @@ import pandas as pd
 
 from utils import MyError
 
+DATA_DIR = os.path.join(".", "data")
+
 def label_images(image_dir, label_file):
     # dictionary to store labels
     labels = {"Files": [], "Labels": []}
@@ -35,4 +37,5 @@ def label_images(image_dir, label_file):
     pd.DataFrame.from_dict(labels).to_csv(label_file, index=False)
 
 if __name__ == "__main__":
-    label_images(image_dir="data/cropped", label_file="data/labels.csv")
+    label_images(image_dir=os.path.join(DATA_DIR, "new"), 
+                 label_file=os.path.join(DATA_DIR, "labels_new.csv"))

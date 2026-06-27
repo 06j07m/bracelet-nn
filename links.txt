@@ -1,8 +1,10 @@
-https://www.braceletbook.com/patterns/normal/496/
-https://www.braceletbook.com/patterns/normal/985/
-https://www.braceletbook.com/patterns/normal/80/
-https://www.braceletbook.com/patterns/normal/266/
-https://www.braceletbook.com/patterns/normal/566/
-https://www.braceletbook.com/patterns/normal/609/
-https://www.braceletbook.com/patterns/normal/343/
-https://www.braceletbook.com/patterns/normal/248/
+# https://www.braceletbook.com/patterns/normal/496/
+# https://www.braceletbook.com/patterns/normal/985/
+# https://www.braceletbook.com/patterns/normal/80/
+# https://www.braceletbook.com/patterns/normal/266/
+# https://www.braceletbook.com/patterns/normal/566/
+# https://www.braceletbook.com/patterns/normal/609/
+# https://www.braceletbook.com/patterns/normal/343/
+# https://www.braceletbook.com/patterns/normal/248/
+https://www.braceletbook.com/patterns/normal/48313/
+https://www.braceletbook.com/patterns/normal/48179/

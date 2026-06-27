@@ -8,7 +8,9 @@ from utils import MyError
 # IF THE ODD STRING IS ON THE RIGHT OF THE PATTERN
 # I.E. FIRST KNOT IN FIRST ROW IS ON THE OUTSIDE LEFT
 
-def process_image(filename, starting_index=0):
+DATA_DIR = os.path.join(".", "data")
+
+def process_image(filename, output_folder, starting_index=0):
     if not os.path.exists(filename):
         raise MyError("file not found")
 
@@ -32,9 +34,8 @@ def process_image(filename, starting_index=0):
     even_start_x = 73
 
     # make folder for images
-    dirpath = os.path.join("data", "cropped")
-    if not os.path.exists(dirpath):
-        os.makedirs(dirpath)
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
 
     index = starting_index
 
@@ -45,7 +46,7 @@ def process_image(filename, starting_index=0):
             for col in range(int(cols)):
                 x = odd_start_x + col * (col_width + col_gap)
                 crop_img = img[y:y+row_height, x:x+col_width]
-                filename = os.path.join(dirpath, f"{index}.png")
+                filename = os.path.join(output_folder, f"{index}.png")
                 cv2.imwrite(filename, crop_img)
                 index += 1
 
@@ -58,14 +59,20 @@ def process_image(filename, starting_index=0):
                 if x + col_width > width:
                     continue
                 crop_img = img[y:y+row_height, x:x+col_width]
-                filename = os.path.join(dirpath, f"{index}.png")
+                filename = os.path.join(output_folder, f"{index}.png")
                 cv2.imwrite(filename, crop_img)
                 index += 1
 
     return index
 
 if __name__ == "__main__":
-    i = 0
-    for file in os.listdir("data/original"):
-        if file.endswith(".png"):
-            i = process_image(os.path.join("data", "original", file), starting_index=i)
+    # i = 0
+    # for file in os.listdir(os.path.join(DATA_DIR, "original")):
+    #     if file.endswith(".png"):
+    #         i = process_image(filename=os.path.join(DATA_DIR, "original", file), 
+    #                           output_folder=os.path.join(DATA_DIR, "cropped"),
+    #                           starting_index=i)
+
+    process_image(filename=os.path.join(DATA_DIR, "original", "48313-4-20.png"),
+                  output_folder=os.path.join(DATA_DIR, "new"),
+                  starting_index=1222)
