@@ -1,5 +1,7 @@
 cache/
-data/
+data/original/
+data/cropped/
+data/*.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

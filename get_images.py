@@ -67,7 +67,7 @@ def get_png(url: str):
         print("saved new image")
 
 if __name__ == "__main__":
-    with open("links.txt", "r") as f:
+    with open(os.path.join(DATA_FOLDER, "links.txt"), "r") as f:
         for line in f:
             try:
                 if not line.startswith("#"):
