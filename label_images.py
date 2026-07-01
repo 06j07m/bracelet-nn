@@ -6,7 +6,7 @@ from utils import MyError
 
 DATA_DIR = os.path.join(".", "data")
 
-def label_images(image_dir, label_file):
+def label_images(image_dir: str, label_file: str):
     # dictionary to store labels
     labels = {"File": [], "Label": []}
 

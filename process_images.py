@@ -10,7 +10,7 @@ from utils import MyError
 
 DATA_DIR = os.path.join(".", "data")
 
-def process_image(filename, output_folder, starting_index=0):
+def process_image(filename: str, output_folder: str, starting_index: int=0):
     if not os.path.exists(filename):
         raise MyError("file not found")
 
