@@ -25,7 +25,7 @@ def load_checkpoint(checkpoint_dir: str):
         metrics_file = os.path.join(checkpoint_dir, "metrics.csv")
         if os.path.exists(metrics_file):
             metrics_df = pd.read_csv(metrics_file)
-            metrics = metrics_df.tail(1).to_dict(orient='list')
+            metrics = metrics_df.tail(1).to_dict(orient='index')[0]
 
     else:
         os.makedirs(checkpoint_dir)
@@ -37,7 +37,7 @@ def save_checkpoint(checkpoint_dir: str, checkpoint: dict, metrics: dict):
     torch.save(checkpoint, checkpoint_file)
 
     metrics_file = os.path.join(checkpoint_dir, "metrics.csv")
-    new = pd.DataFrame.from_dict(metrics, orient='columns')
+    new = pd.DataFrame.from_records([metrics])
     if os.path.exists(metrics_file):
         metrics_df = pd.read_csv(metrics_file)
         metrics_df = pd.concat([metrics_df, new], ignore_index=True)
