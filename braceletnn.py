@@ -153,37 +153,34 @@ def train(model, train_data, val_data, test_data,
 
 
 if __name__ == "__main__":
-    # # load datasets
-    # train_dataset = KData(labels_file=os.path.join("data", "train_labels.csv"), 
-    #                 img_dir=os.path.join("data", "cropped"))
-    # val_dataset = KData(labels_file=os.path.join("data", "val_labels.csv"), 
-    #                 img_dir=os.path.join("data", "cropped"))
-    # test_dataset = KData(labels_file=os.path.join("data", "test_labels.csv"), 
-    #                 img_dir=os.path.join("data", "cropped"))
+    # load datasets
+    train_dataset = KData(labels_file=os.path.join("data", "train_labels.csv"), 
+                    img_dir=os.path.join("data", "cropped"))
+    val_dataset = KData(labels_file=os.path.join("data", "val_labels.csv"), 
+                    img_dir=os.path.join("data", "cropped"))
+    test_dataset = KData(labels_file=os.path.join("data", "test_labels.csv"), 
+                    img_dir=os.path.join("data", "cropped"))
 
-    # # hyperparameters & train settings
-    # batch_size = 32
-    # num_epochs = 10
-    # checkpoint_dir = os.path.join("runs")
+    # hyperparameters & train settings
+    batch_size = 32
+    num_epochs = 10
+    checkpoint_dir = os.path.join("runs", "TEST1") # CHANGE TO NEW DIRECTORY FOR EACH TRAINING RUN
 
-    # # create data loaders
-    # train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    # val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
-    # test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+    # create data loaders
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
-    # # load model and move to device
-    # model = KCModel()
-    # model.to(device)
+    # load model and move to device
+    model = KCModel()
+    model.to(device)
 
-    # # define loss function, optimizer, and scheduler
-    # loss_func = nn.CrossEntropyLoss()
-    # optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
-    # # TODO: scheuler
+    # define loss function, optimizer, and scheduler
+    loss_func = nn.CrossEntropyLoss()
+    optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+    scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)
 
-    # # TODO TRAIN
-    outputs = torch.tensor([[0.1, 0.8, 0.05, 0.05]])
-    target = torch.tensor([1])
-
-    _, predicted = torch.max(outputs, 1)
-
-    print(predicted.item())
+    # train
+    train(model, train_loader, val_loader, test_loader, 
+          loss_func, optimizer, scheduler,
+          num_epochs=num_epochs, checkpoint_dir=checkpoint_dir)
