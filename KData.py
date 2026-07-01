@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from torch.utils.data import Dataset
 from torchvision.io import decode_image
+import torchvision.transforms.v2 as transforms
 
 class KData(Dataset):
     def __init__(self, labels_file, img_dir):
@@ -14,6 +15,7 @@ class KData(Dataset):
     def __getitem__(self, index):
         img_path = os.path.join(self.img_dir, str(self.img_labels.iloc[index, 0]))
         image = decode_image(img_path)
+        image = transforms.functional.to_dtype(image) # convert to float32 >:|
         label = self.img_labels.iloc[index, 1]
         return image, label
 
