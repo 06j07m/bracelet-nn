@@ -22,6 +22,7 @@ def process_image(filename: str, output_folder: str, starting_index: int=0):
     number, cols, rows = name.removesuffix(".png").split("-")
     height, width = img.shape
 
+    # entire square
     col_width = 56
     row_height = 56
 
@@ -32,6 +33,19 @@ def process_image(filename: str, output_folder: str, starting_index: int=0):
     odd_start_x = 35
     even_start_y = 65
     even_start_x = 73
+
+    # just the arrow (?)
+    # col_width = 24
+    # row_height = 24
+
+    # row_gap = 53
+    # col_gap = 53
+
+    # odd_start_y = 43
+    # odd_start_x = 51
+    # even_start_y = 81
+    # even_start_x = 88
+
 
     # make folder for images
     if not os.path.exists(output_folder):
@@ -75,4 +89,4 @@ if __name__ == "__main__":
 
     process_image(filename=os.path.join(DATA_DIR, "original", "48313-4-20.png"),
                   output_folder=os.path.join(DATA_DIR, "new"),
-                  starting_index=1222)
+                  starting_index=1)
