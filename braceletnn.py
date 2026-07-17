@@ -4,6 +4,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
+from torchvision.datasets import MNIST
+import torchvision.transforms as transforms
 from torcheval.metrics import MulticlassAccuracy, MulticlassRecall, MulticlassPrecision, MulticlassF1Score
 from tqdm import tqdm
 
@@ -55,11 +57,11 @@ def test(model, test_data, loss_func):
             loss = loss_func(logits, Y)
             running_loss += loss.item()
             
-            logits = torch.argmax(logits, dim=1)
-            accuracy_metric.update(logits, Y)
-            precision_metric.update(logits, Y)
-            recall_metric.update(logits, Y)
-            f1_metric.update(logits, Y)
+            predictions = torch.argmax(logits, dim=1)
+            accuracy_metric.update(predictions, Y)
+            precision_metric.update(predictions, Y)
+            recall_metric.update(predictions, Y)
+            f1_metric.update(predictions, Y)
 
     average_loss = running_loss / len(test_data)
     accuracy = accuracy_metric.compute()
@@ -127,26 +129,31 @@ def train(model, train_data, val_data, test_data,
         # print statistics
         print(f'Training loss: {running_loss / len(train_data):.3f}')
 
-        # validate
-        print(f"Validating after epoch {epoch}...")
-        metrics = validate(model, val_data, loss_func)
-        print(f'\tValidation loss: {metrics["avg_loss"]:.3f}')
-
-        # save checkpoint
+        # create checkpoint
         checkpoint = {
             'epoch': epoch,
             'model_state': model.state_dict(),
             'optimizer_state': optimizer.state_dict(),
             'scheduler_state': scheduler.state_dict()
         }
-        print("Saving checkpoint...")
-        save_checkpoint(checkpoint_dir, checkpoint, metrics)
 
-        # if best model so far, save best model
-        if metrics["avg_loss"] < best_loss:
-            print("Saving best model...")
-            best_loss = metrics["avg_loss"]
-            torch.save(checkpoint, os.path.join(checkpoint_dir, "best.pth"))
+        # validate
+        if val_data is not None:
+            print(f"Validating after epoch {epoch}...")
+            metrics = validate(model, val_data, loss_func)
+            print(f'\tValidation loss: {metrics["avg_loss"]:.3f}')
+
+            print("Saving checkpoint...")
+            save_checkpoint(checkpoint_dir, checkpoint, metrics)
+
+            # if best model so far, save best model
+            if metrics["avg_loss"] < best_loss:
+                print("Saving best model...")
+                best_loss = metrics["avg_loss"]
+                torch.save(checkpoint, os.path.join(checkpoint_dir, "best.pth"))
+        else:
+            print("Saving checkpoint (no val)...")
+            save_checkpoint(checkpoint_dir, checkpoint, metrics=None)
 
         running_loss = 0.0
 
@@ -162,6 +169,34 @@ def train(model, train_data, val_data, test_data,
 
 
 if __name__ == "__main__":
+    # hyperparameters & train settings
+    batch_size = 32
+    num_epochs = 10
+    checkpoint_dir = os.path.join("runs", "pretrain1") # CHANGE TO NEW DIRECTORY FOR EACH TRAINING RUN
+
+    # pretraining datasets
+    print("Loading pretraining datasets...")
+    train_dataset = MNIST(root="dataset/", download=False, train=True, transform=transforms.ToTensor())
+    train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
+    test_dataset = MNIST(root="dataset/", download=False, train=False, transform=transforms.ToTensor())
+    test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=True)
+        
+    # load model and move to device
+    print(f"Using device {device}...")
+    model = KCModel()
+    model.to(device)
+
+    # define loss function, optimizer, and scheduler
+    loss_func = nn.CrossEntropyLoss()
+    optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+    scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)
+
+    # (pre)train
+    train(model, train_loader, None, test_loader, 
+          loss_func, optimizer, scheduler,
+          num_epochs=num_epochs, checkpoint_dir=checkpoint_dir)
+
+ 
     # load datasets
     print("Loading datasets...")
     train_dataset = KData(labels_file=os.path.join("data", "train_labels.csv"), 
@@ -171,27 +206,11 @@ if __name__ == "__main__":
     test_dataset = KData(labels_file=os.path.join("data", "test_labels.csv"), 
                     img_dir=os.path.join("data", "cropped"))
 
-    # hyperparameters & train settings
-    batch_size = 32
-    num_epochs = 10
-    checkpoint_dir = os.path.join("runs", "TEST1") # CHANGE TO NEW DIRECTORY FOR EACH TRAINING RUN
-
     # create data loaders
-    print("Creating data loaders...")
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
- 
-    # load model and move to device
-    print(f"Using device {device}...")
-    model = KCModel()
-    model.to(device)
-
-    # # define loss function, optimizer, and scheduler
-    loss_func = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
-    scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)
-
+    
     # train
     train(model, train_loader, val_loader, test_loader, 
           loss_func, optimizer, scheduler,
