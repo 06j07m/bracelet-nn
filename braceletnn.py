@@ -215,6 +215,9 @@ if __name__ == "__main__":
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
+    # change linear layer dimensoins
+    model.fc2 = nn.Linear(64, 4)
+
     checkpoint_dir = os.path.join("runs", "train1") # CHANGE TO NEW DIRECTORY FOR EACH TRAINING RUN
     # train
     train(model, train_loader, val_loader, test_loader, 

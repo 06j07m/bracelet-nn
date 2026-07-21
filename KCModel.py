@@ -22,7 +22,7 @@ class RNBlock(nn.Module):
         res_x = self.conv2(res_x)
 
         x += res_x
-        return x    
+        return x
 
 
 class KCModel(nn.Module):
@@ -41,7 +41,7 @@ class KCModel(nn.Module):
         self.flatten = nn.Flatten()
         self.fc1 = nn.Linear(32 * 7 * 7,     # 56x56 pooled 3 times (/2) = 7x7
                              64)
-        self.fc2 = nn.Linear(64, 4)
+        self.fc2 = nn.Linear(64, 9)
         self.relu = nn.ReLU()
         self.softmax = nn.Softmax(dim=1)
 
