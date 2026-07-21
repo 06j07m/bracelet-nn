@@ -176,9 +176,13 @@ if __name__ == "__main__":
 
     # pretraining datasets
     print("Loading pretraining datasets...")
-    train_dataset = MNIST(root="dataset/", download=False, train=True, transform=transforms.ToTensor())
+    transform = transforms.Compose([
+        transforms.RandomInvert(p=0.5),
+        transforms.ToTensor()
+    ])
+    train_dataset = MNIST(root="/content/dataset/", download=True, train=True, transform=transform)
     train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
-    test_dataset = MNIST(root="dataset/", download=False, train=False, transform=transforms.ToTensor())
+    test_dataset = MNIST(root="/content/dataset/", download=True, transform=transform)
     test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=True)
         
     # load model and move to device
@@ -210,7 +214,8 @@ if __name__ == "__main__":
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
-    
+
+    checkpoint_dir = os.path.join("runs", "train1") # CHANGE TO NEW DIRECTORY FOR EACH TRAINING RUN
     # train
     train(model, train_loader, val_loader, test_loader, 
           loss_func, optimizer, scheduler,

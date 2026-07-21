@@ -37,6 +37,7 @@ class KCModel(nn.Module):
         self.conv3 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, padding=1)
         self.block3 = RNBlock(in_channels=32, out_channels=32)
 
+        self.globalpoolidk = nn.AdaptiveAvgPool2d((7, 7)) 
         self.flatten = nn.Flatten()
         self.fc1 = nn.Linear(32 * 7 * 7,     # 56x56 pooled 3 times (/2) = 7x7
                              64)
@@ -57,6 +58,7 @@ class KCModel(nn.Module):
         x = self.block3(x)
         x = self.pool(x)
 
+        x = self.globalpoolidk(x)
         x = self.flatten(x)
         x = self.fc1(x)
         x = self.relu(x)
