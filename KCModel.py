@@ -13,15 +13,15 @@ class RNBlock(nn.Module):
         self.conv2 = nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=3, padding=1)
 
     def forward(self, x):
-        res_x = self.relu(x)
+        res_x = self.conv1(x)
         res_x = self.bn1(res_x)
-        res_x = self.conv1(res_x)
-        
         res_x = self.relu(res_x)
-        res_x = self.bn2(res_x)
+        
         res_x = self.conv2(res_x)
+        res_x = self.bn2(res_x)
+        res_x = self.relu(res_x)
 
-        x += res_x
+        x = x + res_x
         return x
 
 
@@ -41,7 +41,7 @@ class KCModel(nn.Module):
         self.flatten = nn.Flatten()
         self.fc1 = nn.Linear(32 * 7 * 7,     # 56x56 pooled 3 times (/2) = 7x7
                              64)
-        self.fc2 = nn.Linear(64, 9)
+        self.fc2 = nn.Linear(64, 10)
         self.relu = nn.ReLU()
         self.softmax = nn.Softmax(dim=1)
 

@@ -38,14 +38,14 @@ def validate(model, val_data, loss_func):
     return metrics
 
 
-def test(model, test_data, loss_func):
+def test(model, test_data, loss_func, num_classes):
     model.eval()
     running_loss = 0.0
 
-    accuracy_metric = MulticlassAccuracy(num_classes=4, average=None, device=device)
-    precision_metric = MulticlassPrecision(num_classes=4, average=None, device=device)
-    recall_metric = MulticlassRecall(num_classes=4, average=None, device=device)
-    f1_metric = MulticlassF1Score(num_classes=4, average=None, device=device)
+    accuracy_metric = MulticlassAccuracy(num_classes=num_classes, average=None, device=device)
+    precision_metric = MulticlassPrecision(num_classes=num_classes, average=None, device=device)
+    recall_metric = MulticlassRecall(num_classes=num_classes, average=None, device=device)
+    f1_metric = MulticlassF1Score(num_classes=num_classes, average=None, device=device)
 
     with torch.no_grad():
         for i, (X, Y) in enumerate(tqdm(test_data), 0):
@@ -86,7 +86,7 @@ def test(model, test_data, loss_func):
 
 
 def train(model, train_data, val_data, test_data, 
-          loss_func, optimizer, scheduler,
+          loss_func, optimizer, scheduler, num_classes,
           num_epochs=10, checkpoint_dir="."):
 
     start_epoch = 0
@@ -159,7 +159,7 @@ def train(model, train_data, val_data, test_data,
 
     # test model
     print("Testing model...")
-    test_metrics = test(model, test_data, loss_func)
+    test_metrics = test(model, test_data, loss_func, num_classes)
 
     # print and save test results
     with open(os.path.join(checkpoint_dir, "test_metrics.txt"), "w") as f:
@@ -171,7 +171,7 @@ def train(model, train_data, val_data, test_data,
 if __name__ == "__main__":
     # hyperparameters & train settings
     batch_size = 32
-    num_epochs = 10
+    num_epochs = 5
     checkpoint_dir = os.path.join("runs", "pretrain1") # CHANGE TO NEW DIRECTORY FOR EACH TRAINING RUN
 
     # pretraining datasets
@@ -197,7 +197,7 @@ if __name__ == "__main__":
 
     # (pre)train
     train(model, train_loader, None, test_loader, 
-          loss_func, optimizer, scheduler,
+          loss_func, optimizer, scheduler, 10,
           num_epochs=num_epochs, checkpoint_dir=checkpoint_dir)
 
  
@@ -221,5 +221,5 @@ if __name__ == "__main__":
     checkpoint_dir = os.path.join("runs", "train1") # CHANGE TO NEW DIRECTORY FOR EACH TRAINING RUN
     # train
     train(model, train_loader, val_loader, test_loader, 
-          loss_func, optimizer, scheduler,
+          loss_func, optimizer, scheduler, 4,
           num_epochs=num_epochs, checkpoint_dir=checkpoint_dir)
